@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secret Santa</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      padding: 0;
+      background: #f4f4f4;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #444;
+    }
+    #participants, #results {
+      margin: 20px 0;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 1em;
+      margin: 5px 0;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      background: #fff;
+      padding: 10px;
+      margin-bottom: 5px;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    #results {
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Secret Santa</h1>
+  <div id="participants">
+    <h2>Add Participants</h2>
+    <input type="text" id="name" placeholder="Enter name" />
+    <button onclick="addParticipant()">Add</button>
+    <ul id="participant-list"></ul>
+  </div>
+
+  <div id="results" style="display:none;">
+    <h2>Secret Santa Results</h2>
+    <button onclick="shuffleParticipants()">Assign Secret Santa</button>
+    <ul id="assignment-list"></ul>
+  </div>
+
+  <script>
+    const participants = [];
+
+    function addParticipant() {
+      const nameInput = document.getElementById('name');
+      const name = nameInput.value.trim();
+
+      if (name === '') {
+        alert('Name cannot be empty.');
+        return;
+      }
+
+      if (participants.includes(name)) {
+        alert('This name is already added.');
+        return;
+      }
+
+      participants.push(name);
+      nameInput.value = '';
+      updateParticipantList();
+    }
+
+    function updateParticipantList() {
+      const list = document.getElementById('participant-list');
+      list.innerHTML = '';
+      participants.forEach((name) => {
+        const li = document.createElement('li');
+        li.textContent = name;
+        list.appendChild(li);
+      });
+
+      document.getElementById('results').style.display = participants.length > 1 ? 'block' : 'none';
+    }
+
+    function shuffleParticipants() {
+      if (participants.length < 2) {
+        alert('You need at least 2 participants.');
+        return;
+      }
+
+      const shuffled = [...participants].sort(() => Math.random() - 0.5);
+      const assignments = shuffled.map((person, i) => ({
+        giver: person,
+        receiver: shuffled[(i + 1) % shuffled.length],
+      }));
+
+      displayAssignments(assignments);
+    }
+
+    function displayAssignments(assignments) {
+      const list = document.getElementById('assignment-list');
+      list.innerHTML = '';
+
+      assignments.forEach(({ giver, receiver }) => {
+        const li = document.createElement('li');
+        li.textContent = `${giver} → ${receiver}`;
+        list.appendChild(li);
+      });
+    }
+  </script>
+</body>
+</html>
